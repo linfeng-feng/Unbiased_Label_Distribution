@@ -25,7 +25,7 @@ def unbiased_encoding(loc:Tensor, reso:int, angle_range:int=config.angle_range):
 
 
 
-def weighted_adjacent_decoding(logits, selected_classes):
+def weighted_adjacent_decoding(logits:Tensor, selected_classes:int):
     """
     logits: Predicted distribution
     selected_classes: Number of classes selected for weighted adjacent decoding
