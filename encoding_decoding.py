@@ -20,7 +20,7 @@ def unbiased_encoding(loc:Tensor, reso:int, angle_range:int=config.angle_range):
     w1 = w1.view(-1, 1)  # code.shape = (-1, num_classes), w.shape = (-1, 1)
     w0 = 1 - w1
     code = F.one_hot(class0, num_classes)*w0 + \
-        F.one_hot(class1, num_classes)*w1
+           F.one_hot(class1, num_classes)*w1
     return code
 
 
@@ -37,7 +37,7 @@ def weighted_adjacent_decoding(logits, selected_classes):
     k_l[k_l<0] += 2     # There is only one adjacent grid, making the left grid equal to the right grid
     k_r = k + 1
     k_r[k_r==num_classes] -= 2  # There is only one adjacent grid, making the left grid equal to the right grid
-    logit_c = torch.gather(logits, -1, k) # shape = (batch_size*node, 1)
+    logit_c = torch.gather(logits, -1, k) # shape = (batch_size, 1)
     logit_l = torch.gather(logits, -1, k_l)
     logit_r = torch.gather(logits, -1, k_r)
     mask_unique = torch.ne(logit_l, logit_r)
@@ -56,7 +56,7 @@ def weighted_adjacent_decoding(logits, selected_classes):
         sum_prob = logit_c + logit_l + logit_r
         result = (logit_c*k + logit_l*k_l + logit_r*k_r) / sum_prob
     
-    return result.view(result.shape[:-1])
+    return result.view(result.shape[:-1])    # shape = (batch_size)
 
 
 
