@@ -59,6 +59,37 @@ def weighted_adjacent_decoding(logits:Tensor, selected_classes:int):
     return result.view(result.shape[:-1])    # shape = (batch_size)
 
 
+def WAD_odd(logits:Tensor, I_s:int):
+    """
+    Decode the sound source location from the predicted_distribution.
+    
+    Parameters:
+    predicted_distribution (np.ndarray or torch.Tensor): shape (config.cell_reso+1)
+    I_s (int): The number of classes to consider when decoding. It is limited to odd numbers.
+    
+    Returns:
+    np.ndarray or torch.Tensor: The predicted sound source locations
+    """
+    
+    num_outputs = logits.shape[0]
+    l = config.cell_len
+    I = num_outputs - 1
+    
+    # Get the peak class index for each sample in the batch
+    peak = torch.argmax(logits, dim=-1)
+    
+    class_indices = list(range(max(0, peak - I_s // 2), min(I, peak + I_s // 2)+1))
+    
+    weights = logits[class_indices]
+    selected_doas = torch.tensor(class_indices, device=weights.device) * l
+    weighted_sum = torch.sum(weights * selected_doas)
+    sum_weights = torch.sum(weights)
+    
+    doa_h = weighted_sum / sum_weights
+    
+    return doa_h
+
+
 
 def onehot_encoding(loc:Tensor, reso:int, angle_range:int=config.angle_range):
     """
