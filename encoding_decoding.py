@@ -75,7 +75,6 @@ def WAD_odd(logits:Tensor, I_s:int):
     l = config.cell_len
     I = num_outputs - 1
     
-    # Get the peak class index for each sample in the batch
     peak = torch.argmax(logits, dim=-1)
     
     class_indices = list(range(max(0, peak - I_s // 2), min(I, peak + I_s // 2)+1))
